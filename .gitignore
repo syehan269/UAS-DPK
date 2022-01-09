@@ -4,11 +4,6 @@ dist/
 __app__.spec
 
 #   cache
-config/__pycache__/__init__.cpython-310.pyc
-config/__pycache__/config.cpython-310.pyc
-repository/__pycache__/__init__.cpython-310.pyc
-repository/__pycache__/Dummy.cpython-310.pyc
-repository/__pycache__/note.cpython-310.pyc
-utils/__pycache__/date.cpython-310.pyc
 __pycache__/*
+*/__pycache__/*
 app.spec
