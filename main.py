@@ -36,7 +36,6 @@ class Main:
         self.root.geometry(self.config.window_size)
         self.root.resizable(False, False)
         self.root.config(menu=self.create_menubar())
-        print(self.create_menubar())
 
     """Configure the grid of the main window"""
 
@@ -256,31 +255,47 @@ class Main:
         self.note.insert_data(new_item)
         self.load_item()
 
+    """Get item"""
+
     def get_item_by_id(self, id) -> None:
         return self.note.get_data_by_id(id)
 
     """Update item"""
 
     def update_item(self, title, content) -> None:
-        updated_item = {
-            'title': title,
-            'content': content
-        }
+        iid = self.tree.focus()
 
-        self.note.update_data(self.get_selected_item_id(), updated_item)
-        self.load_item()
+        if len(iid) > 0:
+            updated_item = {
+                'title': title,
+                'content': content
+            }
+
+            self.note.update_data(self.get_selected_item_id(), updated_item)
+            self.load_item()
+        else:
+            print('No item is selected')
 
     """Delete selected item"""
 
     def delete_item(self) -> None:
-        self.note.delete_data(self.get_selected_item_id())
-        self.load_item()
+        iid = self.tree.focus()
+
+        if len(iid) > 0:
+            self.note.delete_data(self.get_selected_item_id())
+            self.load_item()
+        else:
+            print('No item is selected')
 
     """Get the ID of the selected item of treeview"""
 
     def get_selected_item_id(self) -> str:
         selected_row = self.tree.focus()
-        return self.tree.item(selected_row, 'values')[0]
+
+        if len(selected_row) > 0:
+            return self.tree.item(selected_row, 'values')[0]
+        else:
+            return False
 
     def open_link(self, link) -> None:
         webbrowser.open_new(link)
