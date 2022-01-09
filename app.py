@@ -1,5 +1,6 @@
 from main import Main
 
+
 class App:
     if __name__ == '__main__':
         app = Main()
