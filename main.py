@@ -1,11 +1,14 @@
 import tkinter as tk
 from tkinter import Toplevel, ttk
-from tkinter.constants import END, NO
-from config.config import Config
-from repository.note import Note
+from tkinter.constants import DISABLED, END, NO
 import random
-from utils.date import Date
 import webbrowser
+from tkinter.messagebox import *
+
+from utils.date import Date
+from utils.validation import Validation
+from repository.note import Note
+from config.config import Config
 
 
 class Main:
@@ -13,6 +16,7 @@ class Main:
         self.config = Config()
         self.note = Note()
         self.date = Date()
+        self.validation = Validation()
 
         self.view_item = self.note.get_data()
         self.init_root()
@@ -45,21 +49,26 @@ class Main:
         self.root.rowconfigure(1, weight=1)
         self.root.rowconfigure(2, weight=1)
         self.root.rowconfigure(3, weight=1)
+        self.root.rowconfigure(4, weight=1)
 
     """Create the container for button at the bottom"""
 
     def create_bottom_button(self) -> None:
         button_add_item = tk.Button(
-            self.root, text='Add New Item', command=self.open_create_window)
+            self.root, text='View Note', command=lambda: self.open_view_window(self.get_selected_item_id()))
         button_add_item.grid(column=0, row=1, sticky='EWN', padx=10, pady=5)
 
+        button_add_item = tk.Button(
+            self.root, text='Add New Note', command=self.open_create_window)
+        button_add_item.grid(column=0, row=2, sticky='EWN', padx=10, pady=5)
+
         button_update_item = tk.Button(
-            self.root, text='Update Item', command=lambda: self.open_update_window(self.get_selected_item_id()))
-        button_update_item.grid(column=0, row=2, sticky='EWN', padx=10)
+            self.root, text='Update Note', command=lambda: self.open_update_window(self.get_selected_item_id()))
+        button_update_item.grid(column=0, row=3, sticky='EWN', padx=10)
 
         button_delete_item = tk.Button(
-            self.root, text='Delete Item', command=self.delete_item)
-        button_delete_item.grid(column=0, row=3, sticky='EWN', padx=10)
+            self.root, text='Delete Note', command=self.delete_item)
+        button_delete_item.grid(column=0, row=4, sticky='EWN', padx=10)
 
     """Create the container for treeview"""
 
@@ -89,8 +98,13 @@ class Main:
         iid = self.tree.identify_row(event.y)
 
         menu = tk.Menu(self.root, tearoff=0)
+
+        menu.add_command(label="View", command=lambda: self.open_view_window(
+            self.get_selected_item_id()))
+
         menu.add_command(label="Update", command=lambda: self.open_update_window(
             self.get_selected_item_id()))
+
         menu.add_command(label="Delete", command=self.delete_item)
 
         if iid:
@@ -128,75 +142,115 @@ class Main:
         create_window.rowconfigure(4, weight=0)
 
         """Label for title"""
-        label_title = tk.Label(create_window, text='Title')
+        label_title = tk.Label(create_window, text='Title :')
         label_title.grid(
             column=0, row=0, padx=self.config.main_margin, pady=5, sticky='NW')
 
         """Input for title"""
-        input_title = ttk.Entry(create_window, width=90)
-        input_title.grid(
+        self.input_title = ttk.Entry(create_window, width=90)
+        self.input_title.grid(
             column=0, row=1, padx=self.config.main_margin, pady=5, sticky='NWE')
 
         """Label for content"""
-        label_content = tk.Label(create_window, text='Content')
+        label_content = tk.Label(create_window, text='Content :')
         label_content.grid(
             column=0, row=2, padx=self.config.main_margin, pady=5, sticky='NW')
 
         """Input for content"""
-        input_content = tk.Text(create_window, width=90)
-        input_content.grid(
+        self.input_content = tk.Text(create_window, width=90)
+        self.input_content.grid(
             column=0, row=3, padx=self.config.main_margin, pady=5)
 
         """Button for submit"""
         button_create = tk.Button(create_window, text='Add Note', command=lambda: self.add_item(
-            input_title.get(), input_content.get("1.0", 'end-1c')))
+            self.input_title.get(), self.input_content.get("1.0", 'end-1c')))
         button_create.grid(
             column=0, row=4, padx=self.config.main_margin, pady=5, sticky='NWE')
 
     """Open new window to update note"""
 
     def open_update_window(self, id) -> None:
-        update_window = Toplevel(self.root)
-        update_window.title('Add New Note')
-        update_window.geometry('330x500')
-        update_window.resizable(False, False)
+        iid = self.tree.focus()
 
-        update_window.columnconfigure(0, weight=1)
-        update_window.rowconfigure(0, weight=0)
-        update_window.rowconfigure(1, weight=0)
-        update_window.rowconfigure(2, weight=0)
-        update_window.rowconfigure(3, weight=2)
-        update_window.rowconfigure(4, weight=0)
+        if len(iid) > 0:
+            update_window = Toplevel(self.root)
+            update_window.title('Edit Note')
+            update_window.geometry('330x500')
+            update_window.resizable(False, False)
 
-        note = self.get_item_by_id(id)
+            update_window.columnconfigure(0, weight=1)
+            update_window.rowconfigure(0, weight=0)
+            update_window.rowconfigure(1, weight=0)
+            update_window.rowconfigure(2, weight=0)
+            update_window.rowconfigure(3, weight=2)
+            update_window.rowconfigure(4, weight=0)
 
-        """Label for title"""
-        label_title = tk.Label(update_window, text='Title')
-        label_title.grid(
-            column=0, row=0, padx=self.config.main_margin, pady=5, sticky='NW')
+            note = self.get_item_by_id(id)
 
-        """Input for title"""
-        input_title = ttk.Entry(update_window, width=90)
-        input_title.grid(
-            column=0, row=1, padx=self.config.main_margin, pady=5, sticky='NWE')
-        input_title.insert(END, note['title'])
+            """Label for title"""
+            label_title = tk.Label(update_window, text='Title :')
+            label_title.grid(
+                column=0, row=0, padx=self.config.main_margin, pady=5, sticky='NW')
 
-        """Label for content"""
-        label_content = tk.Label(update_window, text='Content')
-        label_content.grid(
-            column=0, row=2, padx=self.config.main_margin, pady=5, sticky='NW')
+            """Input for title"""
+            input_title = ttk.Entry(update_window, width=90)
+            input_title.grid(
+                column=0, row=1, padx=self.config.main_margin, pady=5, sticky='NWE')
+            input_title.insert(END, note['title'])
 
-        """Input for content"""
-        input_content = tk.Text(update_window, width=90)
-        input_content.grid(
-            column=0, row=3, padx=self.config.main_margin, pady=5)
-        input_content.insert(END, note['content'])
+            """Label for content"""
+            label_content = tk.Label(update_window, text='Content :')
+            label_content.grid(
+                column=0, row=2, padx=self.config.main_margin, pady=5, sticky='NW')
 
-        """Button for submit"""
-        button_create = tk.Button(update_window, text='Update Note', command=lambda: self.update_item(
-            input_title.get(), input_content.get("1.0", 'end-1c')))
-        button_create.grid(
-            column=0, row=4, padx=self.config.main_margin, pady=5, sticky='NWE')
+            """Input for content"""
+            input_content = tk.Text(update_window, width=90)
+            input_content.grid(
+                column=0, row=3, padx=self.config.main_margin, pady=5)
+            input_content.insert(END, note['content'])
+
+            """Button for submit"""
+            button_create = tk.Button(update_window, text='Update Note', command=lambda: self.update_item(
+                input_title.get(), input_content.get("1.0", 'end-1c')))
+            button_create.grid(
+                column=0, row=4, padx=self.config.main_margin, pady=5, sticky='NWE')
+
+        else:
+            print('No item is selected')
+
+    """Open new window to update note"""
+
+    def open_view_window(self, id) -> None:
+        iid = self.tree.focus()
+
+        if len(iid) > 0:
+            update_window = Toplevel(self.root)
+            update_window.title('View Note')
+            update_window.geometry('330x500')
+            update_window.resizable(False, False)
+
+            update_window.columnconfigure(0, weight=1)
+            update_window.rowconfigure(0, weight=0)
+            update_window.rowconfigure(1, weight=0)
+            update_window.rowconfigure(2, weight=0)
+
+            note = self.get_item_by_id(id)
+
+            """Input for title"""
+            text_title = tk.Label(update_window, text=note['title'])
+            text_title.grid(
+                column=0, row=1, padx=self.config.main_margin, pady=5, sticky='NW')
+
+            """Label for content"""
+            separator = ttk.Separator(update_window)
+            separator.grid(column=0, row=2, padx=15, pady=5, sticky='EW')
+
+            """Input for content"""
+            text_content = tk.Message(update_window, text=note['content'], width=300)
+            text_content.grid(column=0, row=3, padx=self.config.main_margin, pady=5, sticky='NW')
+
+        else:
+            print('No item is selected')
 
     """Open new window of menu about"""
 
@@ -245,15 +299,26 @@ class Main:
     """Add new item"""
 
     def add_item(self, title, content) -> None:
-        new_item = {
-            'id': random.randint(100, 500),
-            'title': title,
-            'date': self.date.get_formatted_date(),
-            'content': content
-        }
+        validation = self.validation.validate([title, content])
 
-        self.note.insert_data(new_item)
-        self.load_item()
+        if validation:
+            new_item = {
+                'id': random.randint(100, 500),
+                'title': title,
+                'date': self.date.get_formatted_date(),
+                'content': content
+            }
+
+            self.note.insert_data(new_item)
+            self.load_item()
+
+            """reset the field's value"""
+            self.input_content.insert(END, '')
+            self.input_title.insert(END, '')
+        else:
+            showwarning(title='Validation Failed',
+                        message="There's empty field!")
+            print('field(s) is empty!')
 
     """Get item"""
 
@@ -263,9 +328,9 @@ class Main:
     """Update item"""
 
     def update_item(self, title, content) -> None:
-        iid = self.tree.focus()
+        validation = self.validation.validate([title, content])
 
-        if len(iid) > 0:
+        if validation:
             updated_item = {
                 'title': title,
                 'content': content
@@ -274,7 +339,9 @@ class Main:
             self.note.update_data(self.get_selected_item_id(), updated_item)
             self.load_item()
         else:
-            print('No item is selected')
+            showwarning(title='Validation Failed',
+                        message="There's empty field!")
+            print('Field(s) is empty!')
 
     """Delete selected item"""
 
