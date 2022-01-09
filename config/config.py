@@ -1,7 +1,5 @@
 class Config:
     def __init__(self) -> None:
-        #constant configuration
-
         self.app_name = 'Prototype'
         self.window_size = '350x500'
 
