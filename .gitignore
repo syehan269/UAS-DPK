@@ -1,5 +1,7 @@
 /build/*
 dist/
+
+#   cache
 __pycache__/__app__.cpython-310.pyc
 __pycache__/config.cpython-310.pyc
 __pycache__/Dummy.cpython-310.pyc
@@ -10,3 +12,4 @@ repository/__pycache__/__init__.cpython-310.pyc
 repository/__pycache__/Dummy.cpython-310.pyc
 repository/__pycache__/note.cpython-310.pyc
 utils/__pycache__/date.cpython-310.pyc
+__app__.spec
