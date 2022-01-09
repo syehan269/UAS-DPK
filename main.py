@@ -23,6 +23,8 @@ class Main:
         self.create_list_container()
         self.create_bottom_button()
 
+        self.tree.bind("<Button-3>", self.create_menu)
+
     """Components initiallization"""
 
     """Initialize the main window"""
@@ -32,6 +34,8 @@ class Main:
         self.root.title(self.config.app_name)
         self.root.geometry(self.config.window_size)
         self.root.resizable(False, False)
+        self.root.config(menu=self.create_menubar())
+        print(self.create_menubar())
 
     """Configure the grid of the main window"""
 
@@ -79,6 +83,32 @@ class Main:
         self.tree.grid(column=0, row=0, sticky='NSEW',
                        padx=self.config.main_margin, pady=self.config.main_margin)
 
+    """initialize the menu"""
+    def create_menu(self, event) -> None:
+        iid = self.tree.identify_row(event.y)
+
+        menu = tk.Menu(self.root, tearoff=0)
+        menu.add_command(label="Update", command=lambda: self.open_update_window(self.get_selected_item_id()))
+        menu.add_command(label="Delete", command=self.delete_item)
+
+        if iid:
+            self.tree.selection_set(iid)
+            menu.tk_popup(event.x_root, event.y_root)
+        else:
+            menu.grab_release()
+
+    """Initialize the menubar"""
+    def create_menubar(self):
+        menubar = tk.Menu(self.root)
+        info_menu = tk.Menu(menubar, tearoff=0)
+        info_menu.add_command(label="About")
+
+        menubar.add_cascade(label="Info", menu=info_menu)
+        
+        return menubar
+
+    """Initialize the new windows"""
+
     """Open new window to create new note"""
 
     def open_create_window(self) -> None:
@@ -120,7 +150,7 @@ class Main:
         button_create.grid(
             column=0, row=4, padx=self.config.main_margin, pady=5, sticky='NWE')
 
-    """Create new window to update note"""
+    """Open new window to update note"""
 
     def open_update_window(self, id) -> None:
         update_window = Toplevel(self.root)
@@ -160,10 +190,19 @@ class Main:
         input_content.insert(END, note['content'])
 
         """Button for submit"""
-        button_create = tk.Button(update_window, text='Add Note', command=lambda: self.add_item(
+        button_create = tk.Button(update_window, text='Update Note', command=lambda: self.update_item(
             input_title.get(), input_content.get("1.0", 'end-1c')))
         button_create.grid(
             column=0, row=4, padx=self.config.main_margin, pady=5, sticky='NWE')
+
+    """Open new window of menu about"""
+    def open_menu_about(self) -> None:
+        about_window = tk.Toplevel(self.root)
+        about_window.resizable(False, False)
+        about_window.geometry('400x300')
+        about_window.title('About')
+        
+        nama_label = tk.Label(about_window, text=)
 
     """Listener function"""
 
