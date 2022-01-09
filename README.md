@@ -10,8 +10,9 @@ Fitur:
   * Hapus note
 
 ## Building Project
+* Pastikan Python telah terinstal
 
-* Install Pyinstaller dengan menjalankan command
+* Instal Pyinstaller dengan menjalankan command
 >pip install pyinstaller
 
 * Masuk ke directory project
@@ -19,4 +20,4 @@ Fitur:
 * Kemudian jalankan command berikut untuk melakukan build
 >pyinstaller app.py -F
 
-* Build dapat ditemukan di folder "dist"
+* Hasil build dapat ditemukan di folder "dist"
