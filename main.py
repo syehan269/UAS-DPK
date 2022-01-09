@@ -5,6 +5,7 @@ from config.config import Config
 from repository.note import Note
 import random
 from utils.date import Date
+import webbrowser
 
 
 class Main:
@@ -84,11 +85,13 @@ class Main:
                        padx=self.config.main_margin, pady=self.config.main_margin)
 
     """initialize the menu"""
+
     def create_menu(self, event) -> None:
         iid = self.tree.identify_row(event.y)
 
         menu = tk.Menu(self.root, tearoff=0)
-        menu.add_command(label="Update", command=lambda: self.open_update_window(self.get_selected_item_id()))
+        menu.add_command(label="Update", command=lambda: self.open_update_window(
+            self.get_selected_item_id()))
         menu.add_command(label="Delete", command=self.delete_item)
 
         if iid:
@@ -98,13 +101,14 @@ class Main:
             menu.grab_release()
 
     """Initialize the menubar"""
+
     def create_menubar(self):
         menubar = tk.Menu(self.root)
         info_menu = tk.Menu(menubar, tearoff=0)
-        info_menu.add_command(label="About")
+        info_menu.add_command(label="About", command=self.open_menu_about)
 
         menubar.add_cascade(label="Info", menu=info_menu)
-        
+
         return menubar
 
     """Initialize the new windows"""
@@ -196,13 +200,35 @@ class Main:
             column=0, row=4, padx=self.config.main_margin, pady=5, sticky='NWE')
 
     """Open new window of menu about"""
+
     def open_menu_about(self) -> None:
         about_window = tk.Toplevel(self.root)
         about_window.resizable(False, False)
-        about_window.geometry('400x300')
+        about_window.geometry('250x100')
         about_window.title('About')
-        
-        nama_label = tk.Label(about_window, text=)
+        about_window.attributes('-toolwindow', True)
+
+        about_window.columnconfigure(0, weight=1)
+        about_window.rowconfigure(0, weight=1)
+        about_window.rowconfigure(1, weight=1)
+        about_window.rowconfigure(2, weight=1)
+        about_window.rowconfigure(3, weight=1)
+
+        author_label = tk.Label(
+            about_window, text=f"Author: {self.config.author}")
+        author_label.grid(column=0, row=0)
+
+        info_label = tk.Label(about_window, text=f"Info: {self.config.info}")
+        info_label.grid(column=0, row=1)
+
+        nim_label = tk.Label(about_window, text=f"NIM: {self.config.nim}")
+        nim_label.grid(column=0, row=2)
+
+        repository_label = tk.Label(
+            about_window, text="Link repository", fg='blue', cursor='hand2')
+        repository_label.bind(
+            '<Button-1>', lambda e: self.open_link(self.config.repository_link))
+        repository_label.grid(column=0, row=3)
 
     """Listener function"""
 
@@ -255,3 +281,6 @@ class Main:
     def get_selected_item_id(self) -> str:
         selected_row = self.tree.focus()
         return self.tree.item(selected_row, 'values')[0]
+
+    def open_link(self, link) -> None:
+        webbrowser.open_new(link)
