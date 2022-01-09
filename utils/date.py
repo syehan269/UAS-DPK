@@ -1,7 +1,8 @@
 from datetime import datetime
 
+
 class Date:
-    
+
     def get_formatted_date(self) -> str:
         current_day = datetime.now().strftime('%d')
         current_month = datetime.now().strftime('%m')

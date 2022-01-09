@@ -3,25 +3,25 @@ class Note:
         self.__task = [
             {
                 'id': 1,
-                'title': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'title': 'Lorem 1',
                 'date': '09-12-2021',
                 'content': """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."""
             },
             {
                 'id': 2,
-                'title': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'title': 'Lorem 2',
                 'date': '10-12-2021',
                 'content': """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."""
             },
             {
                 'id': 3,
-                'title': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'title': 'Lorem 3',
                 'date': '11-12-2021',
                 'content': """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."""
             },
             {
                 'id': 4,
-                'title': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'title': 'Lorem 4',
                 'date': '13-12-2021',
                 'content': """Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. """
             }
