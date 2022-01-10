@@ -13,11 +13,11 @@ Fitur:
 * Pastikan Python telah terinstal
 
 * Instal Pyinstaller dengan menjalankan command
->`pip install pyinstaller`
+`pip install pyinstaller`
 
 * Masuk ke directory project
 
 * Kemudian jalankan command berikut untuk melakukan build
->`pyinstaller app.py -F`
+`pyinstaller app.py -F`
 
 * Hasil build dapat ditemukan di folder "dist"
